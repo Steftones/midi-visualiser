@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+      "moduleResolution": "node", // describes how to find libraries
+      "strict": true,
+      "paths": { // when it sees this path in an import, it will use a type definition found in this folder
+        "three/examples/jsm/libs/dat.gui.module": [
+          "../../node_modules/@types/dat.gui"
+        ]
+      }
+  },
+  "include": ["**/*.ts"] // will convert all files with .ts in any folders
+}
