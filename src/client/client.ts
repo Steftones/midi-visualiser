@@ -219,7 +219,7 @@ const currentSong = {
 }
 
 Tone.Transport.bpm.value = 170
-Tone.Transport.start()
+// Tone.Transport.start()
 Tone.Transport.scheduleRepeat((time) => { 
   repeat(time)
 }, '8n')
@@ -242,4 +242,35 @@ const repeat = (time: any) => {
     snareAnimations()
   }
   index++
+}
+
+// ? midi experiment
+// npm install @types/webmidi
+window.navigator.requestMIDIAccess()
+  .then(access => {
+    console.log(access)
+    // getting device
+    const device: any = access.inputs.values().next()
+    console.log(
+      'Device found! - Output port [type:\'' + device.value.type + '\'] id:\'' + device.value.id +
+      '\' manufacturer:\'' + device.value.manufacturer + '\' name:\'' + device.value.name +
+      '\' version:\'' + device.value.version + '\''
+    )
+    // problem - it will only work on one midi device that's plugged in...
+    device.value.onmidimessage = onMidiMessage
+  })
+  .catch(() => midiAccessFail())
+
+let midiNoteOn = false
+function onMidiMessage(message: any){
+  midiNoteOn = !midiNoteOn
+  if (midiNoteOn){
+    Math.random() < 0.3 ? nitro = 2 : nitro = 0
+    cube.scale.x = (Math.random() * (3 - 1.5) + 1.5)
+    console.log(message)
+  }
+}
+
+function midiAccessFail(){
+  console.log('no midi!')
 }
