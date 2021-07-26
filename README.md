@@ -4,6 +4,8 @@ Play notes using your midi hardware device to create 3D graphics in the browser.
 ## Midi notes
 Currently midi notes C4 - A4 are mapped to this app. Play them to control the graphics that appear on screen.
 
+Press the 'd' key to display a demo.
+
 ## Installation instructions
 <ul>
 <li> Clone this repo to your computer <b>OR</b> go to 'Code' > 'Download Zip' and unzip the folder.

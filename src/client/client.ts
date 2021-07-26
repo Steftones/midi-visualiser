@@ -92,18 +92,12 @@ function snareAnimations(){
   newMiddle.setScale(randomRange(3,5), randomRange(0,3))
 }
 
-let transportOn = true
-
 // ? ----- temporary measure for demonstration -----
 document.addEventListener('keydown', (event) => {
   console.log(`pressed: ${event.key}`)
-  if (event.key === 's'){
-    kickAnimations()
-    kick.triggerAttackRelease('c3', '8n')
-  }
   if (event.key === 'd'){
-    transportOn = !transportOn
-    transportOn ? Tone.Transport.stop() : Tone.Transport.start()
+    Tone.Transport.start()
+    kick.triggerAttackRelease('c3', '8n')
   }
   if (event.key === 'y'){
     snareAnimations()
