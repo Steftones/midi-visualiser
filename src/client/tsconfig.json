@@ -12,5 +12,5 @@
         ]
       }
   },
-  "include": ["**/*.ts"] // will convert all files with .ts in any folders
+  "include": ["**/*.ts", "../../clientold2.ts"] // will convert all files with .ts in any folders
 }
