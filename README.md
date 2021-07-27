@@ -1,6 +1,8 @@
 # Midi Visualiser
 Play notes using your midi hardware device to create 3D graphics in the browser.
 
+Uses the Web MIDI API (may not be compatible in some browsers).
+
 ## Midi notes
 Currently midi notes C4 - A4 are mapped to this app. Play them to control the graphics that appear on screen.
 

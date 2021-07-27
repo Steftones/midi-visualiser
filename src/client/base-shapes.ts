@@ -59,7 +59,6 @@ class Shape {
   }
 
   update(){
-    // maybe spinning and rotating are the same thing?
     if (this.spin) this.shape.rotation.x += this.spinAmount
     if (this.decreaseScale){
       if (this.shape.scale.x > 1) this.shape.scale.x -= 0.05
@@ -73,7 +72,6 @@ class Shape {
       this.shape.rotation.z += (this.rotateDirectionLeft ? this.randomValues : -Math.abs(this.randomValues)) + nitro
       this.shape.rotation.x += 0
       this.shape.rotation.y += 0
-      // this.rotateDirectionLeft ? 0.1 : -0.1
     }
   }
 }

@@ -6,11 +6,8 @@
       "paths": { // when it sees this path in an import, it will use a type definition found in this folder
         "three/examples/jsm/libs/dat.gui.module": [
           "../../node_modules/@types/dat.gui"
-        ],
-        "three/examples/js/geometries/ConvexGeometry": [
-          "../../node_modules/@types/three/examples/js/geometries/ConvexGeometry"
         ]
       }
   },
-  "include": ["**/*.ts", "../../clientold2.ts"] // will convert all files with .ts in any folders
+  "include": ["**/*.ts"] // will convert all files with .ts in any folders
 }

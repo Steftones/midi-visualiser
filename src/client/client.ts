@@ -5,7 +5,7 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 import * as Tone from 'tone'
 
 // base shapes to render
-import { Sphere, Cone, Cube } from './base-shapes'
+import { Sphere, Cube } from './base-shapes'
 
 // speeds up rotation
 export let nitro = 0
@@ -29,7 +29,9 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
 // allows you to control the cube with the mouse
-new OrbitControls(camera, renderer.domElement)
+const orbitControls = new OrbitControls(camera, renderer.domElement)
+// orbitControls.autoRotate = true
+// orbitControls.autoRotateSpeed = 40
 
 // adding a background colour
 scene.background = new THREE.Color('orange')
@@ -46,26 +48,72 @@ function onWindowResize() {
 const stats = Stats()
 document.body.appendChild(stats.dom)
 
+// ? ----- line objects -----
+const material = new THREE.LineBasicMaterial({
+  color: 'black',
+  linewidth: 10,
+  linecap: 'round',
+  linejoin: 'bevel'
+})
+
+const points = []
+points.push(new THREE.Vector3(-100, 0, 0))
+points.push(new THREE.Vector3(0, 0, 0))
+points.push(new THREE.Vector3(0, 0.1, 1))
+points.push(new THREE.Vector3(100, 0, 1))
+points.push(new THREE.Vector3(100, 0, 1))
+
+const geometry = new THREE.BufferGeometry().setFromPoints( points )
+const line = new THREE.Line( geometry, material )
+
+
+const curve = new THREE.SplineCurve([
+  new THREE.Vector2(-1, 0),
+  new THREE.Vector2(-5, 5),
+  new THREE.Vector2(0, 0),
+  new THREE.Vector2(5, -5),
+  new THREE.Vector2(1, 0)
+])
+
+const points2 = curve.getPoints(50)
+const geometry2 = new THREE.BufferGeometry().setFromPoints(points2)
+const materials = new THREE.LineBasicMaterial({ color: 'black', linewidth: 1, linecap: 'round' })
+const splineObject = new THREE.Line(geometry2, materials)
+
+
 // ? ----- shape declerations ----
+const funkyCube = new Cube()
+funkyCube.updateMaterial({ opacity: 1 }) // 0.4 before
 
-const newMiddle = new Sphere()
-newMiddle.updateGeometry(0.5, 0.5, 1)
+const regularCube = new Cube()
+regularCube.toggleRotateDirection()
+regularCube.updateMaterial({ opacity: 0.4 })
 
-const newMiddles = new Cube()
-newMiddles.toggleRotateDirection()
+const smallTriangle = new Sphere()
+smallTriangle.updateGeometry(0.5, 0.5, 1)
+smallTriangle.updateMaterial({ opacity: 0.8 })
 
-const newCube = new Cube()
-newCube.updateMaterial({ opacity: 0.4 })
+scene.add(line)
+scene.add(splineObject)
 
 // ? ----- for animation -----
-
+let spinMultiplier = 1
 function animate() {
   requestAnimationFrame(animate)
 
   // rendering all objects
-  newMiddle.update()
-  newMiddles.update()
-  newCube.update()
+  smallTriangle.update()
+  regularCube.update()
+  funkyCube.update()
+
+  orbitControls.update()
+
+  line.rotation.x += 0.1 * spinMultiplier
+  line.rotation.y += 0.1 * spinMultiplier
+  line.rotation.z += 0.05 * spinMultiplier
+  splineObject.rotation.x += 0.1 * spinMultiplier
+  splineObject.rotation.y += 0.1 * spinMultiplier
+  splineObject.rotation.z += 0.05 * spinMultiplier
 
   stats.update()
   render()
@@ -78,18 +126,18 @@ function render() {
 }
 
 function kickAnimations(){
-  console.log('kicked')
-  newCube.increaseScale()
-  newCube.stopSpin()
+  spinMultiplier = 1
+  funkyCube.increaseScale()
+  funkyCube.stopSpin()
 }
 
 let snareNitroToggle = false
 function snareAnimations(){
-  console.log('snared')
+  spinMultiplier = 2.5
   snareNitroToggle = !snareNitroToggle
   snareNitroToggle ? (Math.random() < 0.5 ? nitro = 0.3 : nitro = 0) : nitro = 0
-  Math.round(Math.random()) ? newMiddle.updateGeometry(0.5, 0.7, 1) : newMiddle.updateGeometry(0.6, 0.7, 1)
-  newMiddle.setScale(randomRange(3,5), randomRange(0,3))
+  Math.round(Math.random()) ? smallTriangle.updateGeometry(0.5, 0.7, 1) : smallTriangle.updateGeometry(0.6, 0.7, 1)
+  smallTriangle.setScale(randomRange(3,5), randomRange(0,3))
 }
 
 // ? ----- temporary measure for demonstration -----
@@ -104,6 +152,9 @@ document.addEventListener('keydown', (event) => {
   }
   if (event.key === 'u'){
     kickAnimations()
+  }
+  if (event.key === 'i'){
+    spinMultiplier = 2.5
   }
 })
 
@@ -125,14 +176,14 @@ const currentSong = {
   ]
 }
 
-Tone.Transport.bpm.value = 240
+Tone.Transport.bpm.value = 250
 Tone.Transport.scheduleRepeat((time) => { 
   repeat(time)
 }, '8n')
 
 // generating a note
 const kick = new Tone.Synth().toDestination()
-const verb = new Tone.Reverb().toDestination()
+const verb = new Tone.Reverb(5).toDestination()
 kick.connect(verb)
 kick.volume.value = -5
 
@@ -142,17 +193,17 @@ const repeat = (time: any): void => {
   const synthNote1 = currentSong.kick[position]
   const synthNote2 = currentSong.snare[position]
   if (synthNote1){
-    kick.triggerAttackRelease('c3', '8n', time)
     kickAnimations()
+    kick.triggerAttackRelease('c3', '8n', time)
   }
   if (synthNote2){
-    kick.triggerAttackRelease('c5', '8n', time)
     snareAnimations()
+    kick.triggerAttackRelease('c5', '8n', time)
   }
   index++
 }
 
-// accessing the web midi API
+// ? ----- accessing the web midi API -----
 window.navigator.requestMIDIAccess()
   .then(access => {
     console.log(access)
@@ -179,10 +230,10 @@ function onMidiMessage(message: any ): void {
           snareAnimations()
           break
         case 64:
-          newCube.spinShape()
+          funkyCube.spinShape()
           break
         case 65:
-          newCube.spinShape(0.1)
+          funkyCube.spinShape(0.1)
           break
         case 67:
           // some functionality
