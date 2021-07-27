@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { MeshNormalMaterialParameters } from 'three'
-import { scene, randomRange, nitro } from './client'
+import randomRange from './lib/random-range'
+import { scene, nitro } from './client'
 
 class Shape {
   shape: THREE.Mesh; geometry: any; material: THREE.MeshNormalMaterial;
@@ -48,7 +49,7 @@ class Shape {
   }
 
   // scale increase / decrease
-  increaseScale(amount: number = (Math.random() * (3 - 1.75) + 1.75), axis: string = 'x', decreaseScale: boolean = true){
+  increaseScale(amount: number = randomRange(3, 1.75), axis: string = 'x', decreaseScale: boolean = true){
     if (axis === 'x' || axis === 'xy') this.shape.scale.x = amount
     if (axis === 'y' || axis === 'xy') this.shape.scale.y = amount
     this.decreaseScale = decreaseScale

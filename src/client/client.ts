@@ -1,19 +1,15 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
+import randomRange from './lib/random-range'
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
 import * as Tone from 'tone'
-
-// base shapes to render
 import { Sphere, Cube } from './base-shapes'
 
 // speeds up rotation
 export let nitro = 0
 
-export function randomRange(min: number, max: number): number {
-  return Math.random() * (max - min) + min
-}
-
+// create scene
 export const scene = new THREE.Scene()
 
 // initial setup
@@ -23,7 +19,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 )
-camera.position.z = 2
+camera.position.z = 3
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
@@ -143,18 +139,20 @@ function snareAnimations(){
 // ? ----- temporary measure for demonstration -----
 document.addEventListener('keydown', (event) => {
   console.log(`pressed: ${event.key}`)
-  if (event.key === 'd'){
-    Tone.Transport.start()
-    kick.triggerAttackRelease('c3', '8n')
-  }
-  if (event.key === 'y'){
-    snareAnimations()
-  }
-  if (event.key === 'u'){
-    kickAnimations()
-  }
-  if (event.key === 'i'){
-    spinMultiplier = 2.5
+  switch (event.key){
+    case 'd':
+      Tone.Transport.start()
+      kick.triggerAttackRelease('c3', '8n')
+      break
+    case 'y':
+      snareAnimations()
+      break
+    case 'u':
+      kickAnimations()
+      break
+    case 'i':
+      spinMultiplier = 2.5
+      break
   }
 })
 
@@ -193,12 +191,12 @@ const repeat = (time: any): void => {
   const synthNote1 = currentSong.kick[position]
   const synthNote2 = currentSong.snare[position]
   if (synthNote1){
-    kickAnimations()
     kick.triggerAttackRelease('c3', '8n', time)
+    kickAnimations()
   }
   if (synthNote2){
-    snareAnimations()
     kick.triggerAttackRelease('c5', '8n', time)
+    snareAnimations()
   }
   index++
 }
